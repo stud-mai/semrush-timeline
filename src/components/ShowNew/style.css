@@ -1,0 +1,42 @@
+.button {
+	text-decoration: none;
+    text-align: center;
+    background: #fff;
+    color: #666;
+    padding: 3px 10px 5px;
+    border-radius: 17px;
+	border: 1px solid #ddd;
+	position: relative;
+	cursor: pointer;
+	opacity: 0;
+}
+
+.buttonVisible {
+	animation: fadeIn .3s ease forwards;
+}
+
+.button:hover {
+	color: #0078d7;
+	border: 1px solid #ccc;
+}
+
+.root {
+	text-align: center;
+	position: relative;
+}
+
+.line {
+	border-bottom: 1px solid #ddd;
+    position: absolute;
+    top: 50%;
+	width: 100%;
+}
+
+@keyframes fadeIn {
+	from {
+		opacity: 0;
+	}
+	to {
+		opacity: 1;
+	}
+}
