@@ -1,5 +1,14 @@
 # SEMrush Timeline App (React, Redux, Redux-Saga)
 
+## Running instructions
+
+To run timeline app follow steps should be completed:
+```
+git clone
+npm install
+npm start
+```
+
 ## Task
 
 Your goal is to implement timeline page using provided components and API.
@@ -24,21 +33,6 @@ Please, implement as much as you can.
 **Important note**
 
 You shouln't modify `/src/API/index.ts`. This file just emulates server, so you should have a really good reason to modify it. You cannot use this file as internal state.
-
-## Installation
-
-```
-npm install
-npm start
-```
-
-## Submitting
-
-```
-npm run zip
-```
-
-Please, send us `solution.zip` archive after that.
 
 ## API
 
