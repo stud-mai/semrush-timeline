@@ -30,91 +30,88 @@ const composeActivities = (usersInfo, filesInfo, highlight = false) => activity 
     }
 }
 
-const timelineReducer = (state = initialState, action) => {
-    const { type, payload } = action;
+const handleGetResourceInfo = (state) => ({
+    ...initialState,
+    fetchingResourceInfo: true
+})
 
-    switch (type) {
-        case actionTypes.GET_RESOURCE_INFO:
-            return {
-                ...initialState,
-                fetchingResourceInfo: true
-            }
+const handleSetResourceInfo = (state) => ({
+    ...state,
+    fetchingResourceInfo: false
+})
 
-        case actionTypes.SET_RESOURCE_INFO:
-            return {
-                ...state,
-                fetchingResourceInfo: false
-            }
+const handleSetEntities = (state, { payload: { entities } }) => ({
+    ...state,
+    resourceInfo: entities.map(({ id, name, title, resource }) => ({ id, resource, name: name || title }))
+})
 
-        case actionTypes.SET_ENTITIES:
-            const { entities } = payload;
-            return {
-                ...state,
-                resourceInfo: entities.map(({ id, name, title, resource }) => ({ id, resource, name: name || title }))
-            }
+const handleResetEntities = (state) => ({
+    ...state,
+    resourceInfo: []
+})
 
-        case actionTypes.RESET_ENTITIES:
-            return {
-                ...state,
-                resourceInfo: []
-            }
+const handleGetActivities = (state) => ({
+    ...state,
+    fetchingActivities: true
+})
 
-        case actionTypes.GET_ACTIVITIES:
-            return {
-                ...state,
-                fetchingActivities: true
-            }
-
-        case actionTypes.SET_ACTIVITIES: {
-            const { activities: currentActivities } = state;
-            const { activities, usersInfo, filesInfo } = payload;
-            const commonState = {
-                ...state,
-                fetchingActivities: false
-            }
-
-            if (activities.length) {
-                const latestActivities = activities.map(composeActivities(usersInfo, filesInfo));
-                return {
-                    ...commonState,
-                    activities: [...currentActivities, ...latestActivities]
-                }
-            }
-            return {
-                ...commonState,
-                hasOldActivities: false
-            }
-        }
-
-        case actionTypes.ADD_NEW_ACTIVITY:
-            const { activity } = payload;
-            return {
-                ...state,
-                newActivities: [...state.newActivities, activity]
-            }
-
-        case actionTypes.LOAD_NEW_ACTIVITIES:
-            return {
-                ...state,
-                fetchingNewActivities: true
-            }
-
-        case actionTypes.SET_NEW_ACTIVITIES: {
-            const { activities } = state;
-            const { newActivities, usersInfo, filesInfo } = payload;
-            const newLatestActivities = newActivities.map(composeActivities(usersInfo, filesInfo, true)).reverse()
-
-            return {
-                ...state,
-                activities: [...newLatestActivities, ...activities],
-                newActivities: [],
-                fetchingNewActivities: false
-            }
-        }
-
-        default:
-            return state;
+const handleSetActivities = (state, { payload }) => {
+    const { activities: currentActivities } = state;
+    const { activities, usersInfo, filesInfo } = payload;
+    const commonState = {
+        ...state,
+        fetchingActivities: false
     }
+
+    if (activities.length) {
+        const latestActivities = activities.map(composeActivities(usersInfo, filesInfo));
+        return {
+            ...commonState,
+            activities: [...currentActivities, ...latestActivities]
+        }
+    }
+    return {
+        ...commonState,
+        hasOldActivities: false
+    }
+}
+
+const handleAddNewActivity = (state, { payload: { activity } }) => ({
+    ...state,
+    newActivities: [...state.newActivities, activity]
+})
+
+const handleLoadNewActivities = (state) => ({
+    ...state,
+    fetchingNewActivities: true
+})
+
+const handleSetNewActivities = (state, { payload }) => {
+    const { activities } = state;
+    const { newActivities, usersInfo, filesInfo } = payload;
+    const newLatestActivities = newActivities.map(composeActivities(usersInfo, filesInfo, true)).reverse();
+
+    return {
+        ...state,
+        activities: [...newLatestActivities, ...activities],
+        newActivities: [],
+        fetchingNewActivities: false
+    }
+}
+
+const timelineReducer = (state = initialState, action) => {
+    const handlers = {
+        [actionTypes.GET_RESOURCE_INFO]: handleGetResourceInfo,
+        [actionTypes.SET_RESOURCE_INFO]: handleSetResourceInfo,
+        [actionTypes.SET_ENTITIES]: handleSetEntities,
+        [actionTypes.RESET_ENTITIES]: handleResetEntities,
+        [actionTypes.GET_ACTIVITIES]: handleGetActivities,
+        [actionTypes.SET_ACTIVITIES]: handleSetActivities,
+        [actionTypes.ADD_NEW_ACTIVITY]: handleAddNewActivity,
+        [actionTypes.LOAD_NEW_ACTIVITIES]: handleLoadNewActivities,
+        [actionTypes.SET_NEW_ACTIVITIES]: handleSetNewActivities
+    }
+    return handlers[action.type] ? handlers[action.type](state, action) : state;
 }
 
 export default timelineReducer;
